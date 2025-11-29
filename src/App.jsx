@@ -58,7 +58,7 @@ function App() {
         name: file.name,
         size: file.size,
         file: file,
-        path: file.webkitRelativePath || file.name
+        path: file.path || file.webkitRelativePath || file.name
       }));
 
       const newFiles = filesWithPath.filter(newFile => {
