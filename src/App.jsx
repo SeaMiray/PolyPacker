@@ -7,6 +7,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { exportFABMode } from './utils/fabExport';
 import { exportBoothMode } from './utils/boothExport';
+import { exportCustomMode } from './utils/customExport';
 import { formatFileSize } from './utils/zipExport';
 import { getFileExtension } from './utils/presets';
 import { useToast } from './hooks/useToast';
@@ -16,6 +17,7 @@ import Toast from './components/Toast';
 import ExportProgress from './components/ExportProgress';
 import PreviewPanel from './components/PreviewPanel';
 import Sidebar from './components/Sidebar';
+import CustomExportBuilder from './components/CustomExportBuilder';
 
 function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -26,6 +28,7 @@ function App() {
   const [files, setFiles] = useState([]);
   const [selectedPreset, setSelectedPreset] = useLocalStorage('selectedPreset', 'FAB');
   const [customName, setCustomName] = useLocalStorage('customName', 'Package');
+  const [customStructure, setCustomStructure] = useState({ type: 'folder', name: 'root', children: [] });
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useLocalStorage('sortBy', 'name-asc');
@@ -157,6 +160,15 @@ function App() {
           currentFile: `${customName}Assets.zip`
         });
         await exportBoothMode(files, customName);
+      } else if (selectedPreset === 'Custom') {
+        await exportCustomMode(customStructure, customName, (progress) => {
+          setExportProgress({
+            isExporting: true,
+            current: progress.current,
+            total: progress.total,
+            currentFile: progress.currentFile
+          });
+        });
       }
 
       toast.success('Package exported successfully!');
@@ -336,7 +348,9 @@ function App() {
                 >
                   <option value="FAB">FAB (Unreal)</option>
                   <option value="Booth">Booth</option>
+                  <option value="Custom">Custom Structure</option>
                 </select>
+                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-primary pointer-events-none" />
               </div>
             </div>
 
@@ -374,6 +388,13 @@ function App() {
           <div className="max-w-5xl mx-auto space-y-4">
             {files.length > 0 ? (
               <>
+                {/* Custom Builder UI */}
+                {selectedPreset === 'Custom' && (
+                  <div className="mb-6 h-64">
+                    <CustomExportBuilder files={files} onChange={setCustomStructure} />
+                  </div>
+                )}
+
                 {/* Preset Info (Collapsible) */}
                 <div className={cn(
                   "rounded-xl border p-4 transition-all backdrop-blur-sm retro-inset",
@@ -388,8 +409,10 @@ function App() {
                       <h3 className="font-semibold text-sm flex items-center gap-2 text-cream">
                         {selectedPreset === 'FAB' ? (
                           <span className="text-primary">{t('fabModeInfo')}</span>
-                        ) : (
+                        ) : selectedPreset === 'Booth' ? (
                           <span className="text-success">{t('boothModeInfo')}</span>
+                        ) : (
+                          <span className="text-blue-400">Custom Structure</span>
                         )}
                       </h3>
                     </div>
@@ -423,7 +446,7 @@ function App() {
                                 <li>Output: {customName}_FBX.zip, {customName}_OBJ.zip, etc.</li>
                               </ul>
                             </>
-                          ) : (
+                          ) : selectedPreset === 'Booth' ? (
                             <>
                               <p className="text-cream/70">
                                 Creates a single ZIP file with categorized subfolders.
@@ -433,6 +456,17 @@ function App() {
                                 <li>Textures/ - Image files</li>
                                 <li>Unity/ - Unity packages</li>
                                 <li>Source/ - Source files (.blend, .max)</li>
+                              </ul>
+                            </>
+                          ) : (
+                            <>
+                              <p className="text-cream/70">
+                                Create your own folder structure manually.
+                              </p>
+                              <ul className="text-cream/60 space-y-1 list-disc list-inside">
+                                <li>Create folders</li>
+                                <li>Add files to folders</li>
+                                <li>Export exactly as organized</li>
                               </ul>
                             </>
                           )}
@@ -448,6 +482,7 @@ function App() {
                     selectedPreset={selectedPreset}
                     files={files}
                     customName={customName}
+                    customStructure={customStructure}
                   />
                 </div>
 

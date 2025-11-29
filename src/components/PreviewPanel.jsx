@@ -174,7 +174,7 @@ function PreviewNode({ name, files, level = 0, isLast = false }) {
     );
 }
 
-export default function PreviewPanel({ selectedPreset, files, customName }) {
+export default function PreviewPanel({ selectedPreset, files, customName, customStructure }) {
     const structure = useMemo(() => {
         if (files.length === 0) return null;
 
@@ -184,6 +184,7 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
             const textureFiles = [];
             const unityFiles = [];
             const ueFiles = [];
+            const mtlFiles = [];
 
             files.forEach(file => {
                 const ext = getFileExtension(file.name).substring(1).toUpperCase();
@@ -200,6 +201,8 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
                     unityFiles.push(file);
                 } else if (['.uasset', '.uproject', '.umap'].includes(extLower)) {
                     ueFiles.push(file);
+                } else if (extLower === '.mtl') {
+                    mtlFiles.push(file);
                 }
             });
 
@@ -208,13 +211,27 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
 
             return {
                 type: 'fab',
-                packages: Object.entries(modelGroups).map(([ext, models]) => ({
-                    name: `${customName}_${ext}`,
-                    models,
-                    textures: textureStructure,
-                    unity: unityFiles,
-                    ue: ueFiles
-                }))
+                packages: Object.entries(modelGroups).map(([ext, models]) => {
+                    // Add MTL files to OBJ models
+                    let packageModels = [...models];
+                    if (ext === 'OBJ') {
+                        models.forEach(model => {
+                            const baseName = model.name.replace(/\.obj$/i, '').toLowerCase();
+                            const mtl = mtlFiles.find(m => m.name.replace(/\.mtl$/i, '').toLowerCase() === baseName);
+                            if (mtl) {
+                                packageModels.push(mtl);
+                            }
+                        });
+                    }
+
+                    return {
+                        name: `${customName}_${ext}`,
+                        models: packageModels,
+                        textures: textureStructure,
+                        unity: unityFiles,
+                        ue: ueFiles
+                    };
+                })
             };
         } else if (selectedPreset === 'Booth') {
             const categorized = {
@@ -227,6 +244,8 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
                 UE: [],
                 Source: []
             };
+
+            const mtlFiles = [];
 
             files.forEach(file => {
                 const ext = getFileExtension(file.name);
@@ -246,18 +265,30 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
                     categorized.UE.push(file);
                 } else if (['.blend', '.max', '.ma', '.mb'].includes(ext)) {
                     categorized.Source.push(file);
+                } else if (ext === '.mtl') {
+                    mtlFiles.push(file);
                 }
             });
+
+            // Add MTL files to OBJ category
+            if (mtlFiles.length > 0) {
+                categorized.OBJ.push(...mtlFiles);
+            }
 
             return {
                 type: 'booth',
                 root: `${customName}Assets`,
                 categories: categorized
             };
+        } else if (selectedPreset === 'Custom') {
+            return {
+                type: 'custom',
+                root: customStructure
+            };
         }
 
         return null;
-    }, [selectedPreset, files, customName]);
+    }, [selectedPreset, files, customName, customStructure]);
 
     if (!structure) {
         return (
@@ -270,6 +301,29 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
     if (structure.type === 'fab') {
         return (
             <div className="space-y-4">
+                {/* Settings Header */}
+                <div className="bg-surface-light/30 border border-primary/20 rounded-lg p-3 mb-4 retro-inset">
+                    <h3 className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">Export Settings</h3>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Preset</span>
+                            <span className="text-cream font-medium">FAB (Unreal Engine)</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Package Name</span>
+                            <span className="text-cream font-medium truncate" title={customName}>{customName}</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Total Files</span>
+                            <span className="text-cream font-medium">{files.length}</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Packages</span>
+                            <span className="text-cream font-medium">{structure.packages.length}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <h3 className="text-sm font-medium text-cream/50 mb-3 flex items-center gap-2">
                     <Folder size={14} />
                     FAB Package Structure ({structure.packages.length} {structure.packages.length === 1 ? 'package' : 'packages'})
@@ -308,6 +362,29 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
     if (structure.type === 'booth') {
         return (
             <div>
+                {/* Settings Header */}
+                <div className="bg-surface-light/30 border border-primary/20 rounded-lg p-3 mb-4 retro-inset">
+                    <h3 className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">Export Settings</h3>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Preset</span>
+                            <span className="text-cream font-medium">Booth (VRChat)</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Package Name</span>
+                            <span className="text-cream font-medium truncate" title={customName}>{customName}</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Total Files</span>
+                            <span className="text-cream font-medium">{files.length}</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Root Folder</span>
+                            <span className="text-cream font-medium truncate" title={structure.root}>{structure.root}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <h3 className="text-sm font-medium text-cream/50 mb-3 flex items-center gap-2">
                     <Folder size={14} />
                     Booth Package Structure
@@ -319,5 +396,74 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
         );
     }
 
+    if (structure.type === 'custom') {
+        return (
+            <div>
+                {/* Settings Header */}
+                <div className="bg-surface-light/30 border border-primary/20 rounded-lg p-3 mb-4 retro-inset">
+                    <h3 className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">Export Settings</h3>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Preset</span>
+                            <span className="text-cream font-medium">Custom Structure</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Package Name</span>
+                            <span className="text-cream font-medium truncate" title={customName}>{customName}</span>
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-cream/40">Total Files</span>
+                            <span className="text-cream font-medium">{files.length}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 className="text-sm font-medium text-cream/50 mb-3 flex items-center gap-2">
+                    <Folder size={14} />
+                    Custom Package Structure
+                </h3>
+                <div className="border border-primary/10 rounded-lg p-4 bg-surface-light/20 retro-inset">
+                    {/* We need to convert the custom structure tree to the format PreviewNode expects */}
+                    <CustomPreviewNode node={structure.root} />
+                </div>
+            </div>
+        );
+    }
+
+    return null;
+}
+
+// Helper to render custom tree in preview
+function CustomPreviewNode({ node }) {
+    if (!node) return null;
+
+    if (node.type === 'file') {
+        return (
+            <div className="flex items-center gap-2 py-1.5 px-2 text-sm text-cream/70 hover:bg-surface-light/50 rounded">
+                {getFileIcon(node.name)}
+                <span className="flex-1 truncate">{node.name}</span>
+                <span className="text-[10px] text-cream/30 font-mono">
+                    {formatFileSize(node.file?.size || 0)}
+                </span>
+            </div>
+        );
+    }
+
+    if (node.type === 'folder') {
+        // Don't render root folder name if it's just a container, but here we render everything
+        return (
+            <div className="pl-4">
+                <div className="flex items-center gap-2 py-1.5 px-2 text-sm font-medium text-cream">
+                    <Folder size={14} className="text-yellow-500" />
+                    <span>{node.name}</span>
+                </div>
+                <div className="border-l border-white/5 ml-2">
+                    {node.children.map((child, index) => (
+                        <CustomPreviewNode key={index} node={child} />
+                    ))}
+                </div>
+            </div>
+        );
+    }
     return null;
 }

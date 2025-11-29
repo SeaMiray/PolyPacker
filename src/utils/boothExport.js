@@ -17,6 +17,9 @@ function categorizeBoothFiles(files) {
         Source: []
     };
 
+    // First pass: categorize everything except MTL
+    const mtlFiles = [];
+
     files.forEach(file => {
         const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
         const fileName = file.name.split('/').pop(); // Remove path if exists
@@ -47,7 +50,22 @@ function categorizeBoothFiles(files) {
         else if (['.blend', '.max', '.ma', '.mb', '.c4d', '.ztl'].includes(ext)) {
             categories.Source.push({ ...file, fileName });
         }
+        // MTL files
+        else if (ext === '.mtl') {
+            mtlFiles.push({ ...file, fileName });
+        }
     });
+
+    // Second pass: Add MTL files to OBJ folder if they match an OBJ file
+    // Or just add them to OBJ folder regardless if there are OBJ files?
+    // Let's add them to OBJ folder if there are OBJ files, otherwise they might be orphans but we should probably keep them.
+    // For Booth, we just put them in the OBJ folder.
+
+    if (mtlFiles.length > 0) {
+        // If we have OBJ files, put MTLs there. If not, maybe Source? Or just OBJ folder anyway.
+        // Let's put them in OBJ folder.
+        categories.OBJ.push(...mtlFiles);
+    }
 
     return categories;
 }

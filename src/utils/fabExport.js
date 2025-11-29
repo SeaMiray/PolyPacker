@@ -47,7 +47,8 @@ function categorizeNonModelFiles(files) {
     const categories = {
         textures: [],
         unity: [],
-        ue: []
+        ue: [],
+        mtl: []
     };
 
     files.forEach(file => {
@@ -59,10 +60,26 @@ function categorizeNonModelFiles(files) {
             categories.unity.push(file);
         } else if (['.uasset', '.uproject', '.umap'].includes(ext)) {
             categories.ue.push(file);
+        } else if (ext === '.mtl') {
+            categories.mtl.push(file);
         }
     });
 
     return categories;
+}
+
+/**
+ * Finds MTL file matching an OBJ file
+ * @param {Object} objFile - OBJ file object
+ * @param {Array} mtlFiles - Array of MTL files
+ * @returns {Object|null} - Matching MTL file or null
+ */
+function findMatchingMTL(objFile, mtlFiles) {
+    const baseName = objFile.name.replace(/\.obj$/i, '').toLowerCase();
+    return mtlFiles.find(mtl => {
+        const mtlBaseName = mtl.name.replace(/\.mtl$/i, '').toLowerCase();
+        return mtlBaseName === baseName;
+    });
 }
 
 /**
@@ -137,6 +154,7 @@ export async function exportFABMode(files, customName, onProgress) {
     const textureFiles = nonModelFiles.textures;
     const unityFiles = nonModelFiles.unity;
     const ueFiles = nonModelFiles.ue;
+    const mtlFiles = nonModelFiles.mtl;
     const modelGroups = groupModelsByExtension(files);
 
     if (Object.keys(modelGroups).length === 0) {
@@ -164,9 +182,17 @@ export async function exportFABMode(files, customName, onProgress) {
         const zip = new JSZip();
         const folderName = `${customName}_${ext}`;
 
-        // Add models
+        // Add models (and MTL files for OBJ models)
         models.forEach(model => {
             zip.file(`${folderName}/${model.name}`, model.file || model);
+
+            // If this is an OBJ file, look for matching MTL
+            if (ext === 'OBJ') {
+                const mtl = findMatchingMTL(model, mtlFiles);
+                if (mtl) {
+                    zip.file(`${folderName}/${mtl.name}`, mtl.file || mtl);
+                }
+            }
         });
 
         // Add textures with UE naming
