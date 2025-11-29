@@ -10,10 +10,10 @@ const iconMap = {
 };
 
 const colorMap = {
-    success: 'bg-green-500/10 border-green-500/30 text-green-400',
-    error: 'bg-red-500/10 border-red-500/30 text-red-400',
-    warning: 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400',
-    info: 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+    success: 'bg-success/10 border-success/30 text-success vintage-border',
+    error: 'bg-danger/10 border-danger/30 text-danger vintage-border',
+    warning: 'bg-warning/10 border-warning/30 text-warning vintage-border',
+    info: 'bg-primary/10 border-primary/30 text-primary vintage-border'
 };
 
 export default function Toast({ toasts, onClose }) {
@@ -34,7 +34,7 @@ export default function Toast({ toasts, onClose }) {
                             className={`pointer-events-auto flex items-start gap-3 p-4 rounded-lg border backdrop-blur-md shadow-lg min-w-[320px] max-w-[400px] ${colorClass}`}
                         >
                             <Icon size={20} className="flex-shrink-0 mt-0.5" />
-                            <p className="flex-1 text-sm text-white">{toast.message}</p>
+                            <p className="flex-1 text-sm text-cream">{toast.message}</p>
                             <button
                                 onClick={() => onClose(toast.id)}
                                 className="flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity"

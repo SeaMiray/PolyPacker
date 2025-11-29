@@ -6,7 +6,7 @@ import { formatFileSize } from '../utils/zipExport';
 
 function getFileIcon(filename) {
     const ext = getFileExtension(filename);
-    return <File size={14} className="text-gray-400" />;
+    return <File size={14} className="text-cream/40" />;
 }
 
 function PreviewNode({ name, files, level = 0, isLast = false }) {
@@ -22,11 +22,11 @@ function PreviewNode({ name, files, level = 0, isLast = false }) {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.02 }}
-                        className="flex items-center gap-2 py-1.5 px-2 text-sm text-gray-300 hover:bg-white/[0.02] rounded"
+                        className="flex items-center gap-2 py-1.5 px-2 text-sm text-cream/70 hover:bg-surface-light/50 rounded"
                     >
                         {getFileIcon(file.name)}
                         <span className="flex-1 truncate">{file.name || file}</span>
-                        <span className="text-[10px] text-gray-600 font-mono">
+                        <span className="text-[10px] text-cream/30 font-mono">
                             {formatFileSize(file.size || 0)}
                         </span>
                     </motion.div>
@@ -45,24 +45,24 @@ function PreviewNode({ name, files, level = 0, isLast = false }) {
         <div style={{ paddingLeft: `${level * 20}px` }}>
             <div
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="flex items-center gap-2 py-1.5 px-2 text-sm cursor-pointer hover:bg-white/[0.02] rounded group"
+                className="flex items-center gap-2 py-1.5 px-2 text-sm cursor-pointer hover:bg-surface-light/50 rounded group"
             >
                 <motion.div
                     animate={{ rotate: isExpanded ? 90 : 0 }}
                     transition={{ duration: 0.2 }}
-                    className="text-gray-500"
+                    className="text-cream/40"
                 >
                     <ChevronRight size={14} />
                 </motion.div>
                 {isExpanded ? (
-                    <FolderOpen size={14} className="text-yellow-500" />
+                    <FolderOpen size={14} className="text-primary" />
                 ) : (
-                    <Folder size={14} className="text-yellow-600" />
+                    <Folder size={14} className="text-primary/80" />
                 )}
-                <span className="flex-1 font-medium text-gray-200 group-hover:text-white transition-colors">
+                <span className="flex-1 font-medium text-cream/80 group-hover:text-cream transition-colors">
                     {name}
                 </span>
-                <span className="text-[10px] text-gray-600 bg-white/5 px-1.5 py-0.5 rounded-full font-mono">
+                <span className="text-[10px] text-cream/40 bg-surface-light px-1.5 py-0.5 rounded-full font-mono">
                     {childCount}
                 </span>
             </div>
@@ -152,7 +152,7 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
 
     if (!structure) {
         return (
-            <div className="flex items-center justify-center h-full text-gray-600 text-sm italic">
+            <div className="flex items-center justify-center h-full text-cream/30 text-sm italic">
                 No preview available
             </div>
         );
@@ -161,15 +161,15 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
     if (structure.type === 'fab') {
         return (
             <div className="space-y-4">
-                <h3 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-medium text-cream/50 mb-3 flex items-center gap-2">
                     <Folder size={14} />
                     FAB Package Structure ({structure.packages.length} {structure.packages.length === 1 ? 'package' : 'packages'})
                 </h3>
                 {structure.packages.map((pkg, index) => (
-                    <div key={pkg.name} className="border border-white/5 rounded-lg p-4 bg-white/[0.01]">
+                    <div key={pkg.name} className="border border-primary/10 rounded-lg p-4 bg-surface-light/20 retro-inset">
                         <div className="flex items-center gap-2 mb-3">
-                            <FolderOpen size={16} className="text-blue-400" />
-                            <span className="font-semibold text-white">{pkg.name}.zip</span>
+                            <FolderOpen size={16} className="text-primary" />
+                            <span className="font-semibold text-cream">{pkg.name}.zip</span>
                         </div>
                         <div className="space-y-1 pl-4">
                             <PreviewNode name={pkg.name} files={{
@@ -186,11 +186,11 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
     if (structure.type === 'booth') {
         return (
             <div>
-                <h3 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-medium text-cream/50 mb-3 flex items-center gap-2">
                     <Folder size={14} />
                     Booth Package Structure
                 </h3>
-                <div className="border border-white/5 rounded-lg p-4 bg-white/[0.01]">
+                <div className="border border-primary/10 rounded-lg p-4 bg-surface-light/20 retro-inset">
                     <PreviewNode name={structure.root} files={structure.categories} />
                 </div>
             </div>

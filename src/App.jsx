@@ -586,133 +586,126 @@ function App() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 p-6 overflow-auto relative z-0 custom-scrollbar">
-          <div className="max-w-5xl mx-auto space-y-4">
-            {files.length > 0 ? (
-              <>
-                {/* Preset Info (Collapsible) */}
-                <div className={cn(
-                  "rounded-xl border p-4 transition-all",
-                  presetColors[selectedPreset]
-                )}>
-                  <button
-                    onClick={() => setShowPresetInfo(!showPresetInfo)}
-                    className="w-full flex items-center justify-between text-left"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Package size={14} />
-                      <h3 className="text-sm font-semibold">
-                        {selectedPreset === 'FAB' ? 'FAB Mode' : 'Booth Mode'} Info
-                      </h3>
-                    </div>
-                    <motion.div
-                      animate={{ rotate: showPresetInfo ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronDown size={16} />
-                    </motion.div>
-                  </button>
+        <Package size={14} />
+        <div className="flex items-center gap-2">
+          <Package size={14} />
+          <h3 className="font-semibold text-sm flex items-center gap-2 text-cream">
+            {selectedPreset === 'FAB' ? (
+              <span className="text-primary">{t('fabModeInfo')}</span>
+            ) : (
+              <span className="text-success">{t('boothModeInfo')}</span>
+            )}
+          </h3>
+        </div>
+        <motion.div
+          animate={{ rotate: showPresetInfo ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown size={16} />
+        </motion.div>
+      </button>
 
-                  <AnimatePresence>
-                    {showPresetInfo && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="mt-3 pt-3 border-t border-current/10 space-y-2 text-xs">
-                          {selectedPreset === 'FAB' ? (
-                            <>
-                              <p className="text-gray-300">
-                                Creates separate ZIP files for each 3D model format (.FBX, .OBJ, .GLB).
-                              </p>
-                              <ul className="text-gray-400 space-y-1 list-disc list-inside">
-                                <li>Duplicates Textures folder into each package</li>
-                                <li>Applies Unreal Engine naming conventions</li>
-                                <li>Converts normal maps to DirectX format if needed</li>
-                                <li>Output: {customName}_FBX.zip, {customName}_OBJ.zip, etc.</li>
-                              </ul>
-                            </>
-                          ) : (
-                            <>
-                              <p className="text-gray-300">
-                                Creates a single ZIP file with categorized subfolders.
-                              </p>
-                              <ul className="text-gray-400 space-y-1 list-disc list-inside">
-                                <li>Mesh/ - 3D models (.fbx, .obj, .glb)</li>
-                                <li>Textures/ - Image files</li>
-                                <li>Unity/ - Unity packages</li>
-                                <li>Source/ - Source files (.blend, .max)</li>
-                              </ul>
-                            </>
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+      <AnimatePresence>
+        {showPresetInfo && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-3 pt-3 border-t border-current/10 space-y-2 text-xs">
+              {selectedPreset === 'FAB' ? (
+                <>
+                  <p className="text-cream/70">
+                    Creates separate ZIP files for each 3D model format (.FBX, .OBJ, .GLB).
+                  </p>
+                  <ul className="text-cream/60 space-y-1 list-disc list-inside">
+                    <li>Duplicates Textures folder into each package</li>
+                    <li>Applies Unreal Engine naming conventions</li>
+                    <li>Converts normal maps to DirectX format if needed</li>
+                    <li>Output: {customName}_FBX.zip, {customName}_OBJ.zip, etc.</li>
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p className="text-cream/70">
+                    Creates a single ZIP file with categorized subfolders.
+                  </p>
+                  <ul className="text-cream/60 space-y-1 list-disc list-inside">
+                    <li>Mesh/ - 3D models (.fbx, .obj, .glb)</li>
+                    <li>Textures/ - Image files</li>
+                    <li>Unity/ - Unity packages</li>
+                    <li>Source/ - Source files (.blend, .max)</li>
+                  </ul>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
 
-                {/* Preview Panel */}
-                <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-                  <PreviewPanel
-                    selectedPreset={selectedPreset}
-                    files={files}
-                    customName={customName}
-                  />
-                </div>
+                {/* Preview Panel */ }
+  <div className="rounded-xl border border-primary/10 bg-surface/30 p-6 vintage-border">
+    <PreviewPanel
+      selectedPreset={selectedPreset}
+      files={files}
+      customName={customName}
+    />
+  </div>
 
-                {/* Files Summary */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
-                    <p className="text-xs text-gray-500 mb-1">Total Files</p>
-                    <p className="text-2xl font-bold text-white">{files.length}</p>
-                  </div>
-                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
-                    <p className="text-xs text-gray-500 mb-1">Total Size</p>
-                    <p className="text-2xl font-bold text-white">
-                      {formatFileSize(files.reduce((sum, f) => sum + f.size, 0))}
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
-                    <p className="text-xs text-gray-500 mb-1">Selected</p>
-                    <p className="text-2xl font-bold text-blue-400">{selectedFiles.size}</p>
-                  </div>
-                </div>
+  {/* Files Summary */ }
+  <div className="grid grid-cols-3 gap-3">
+    <div className="rounded-lg border border-primary/10 bg-surface/30 p-4 retro-inset">
+      <p className="text-xs text-cream/50 mb-1">Total Files</p>
+      <p className="text-2xl font-bold text-cream">{files.length}</p>
+    </div>
+    <div className="rounded-lg border border-primary/10 bg-surface/30 p-4 retro-inset">
+      <p className="text-xs text-cream/50 mb-1">Total Size</p>
+      <p className="text-2xl font-bold text-cream">
+        {formatFileSize(files.reduce((sum, f) => sum + f.size, 0))}
+      </p>
+    </div>
+    <div className="rounded-lg border border-primary/10 bg-surface/30 p-4 retro-inset">
+      <p className="text-xs text-cream/50 mb-1">Selected</p>
+      <p className="text-2xl font-bold text-primary">{selectedFiles.size}</p>
+    </div>
+  </div>
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[60vh] text-center">
-                <motion.div
-                  animate={{ rotate: 12 }}
-                  className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-6"
-                >
-                  <Package size={40} className="text-gray-600" />
-                </motion.div>
-                <h3 className="text-2xl font-bold text-gray-200 mb-2">Ready to Pack</h3>
-                <p className="text-gray-500 max-w-md mb-6">
-                  Drag and drop your files, or click the upload area to get started with {selectedPreset === 'FAB' ? 'FAB' : 'Booth'} mode packaging.
-                </p>
-                <div className="flex gap-3 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <div className="w-2 h-2 rounded-full bg-blue-500" />
-                    Smart file organization
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <div className="w-2 h-2 rounded-full bg-green-500" />
-                    UE naming support
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <div className="w-2 h-2 rounded-full bg-purple-500" />
-                    Multi-format export
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+    <div className="flex flex-col items-center justify-center h-[60vh] text-center">
+      <motion.div
+        animate={{ rotate: 12 }}
+        className="w-20 h-20 rounded-2xl bg-surface-light flex items-center justify-center mb-6 border border-primary/20 shadow-lg"
+      >
+        <Package size={40} className="text-primary/60" />
+      </motion.div>
+      <h3 className="text-2xl font-bold text-cream mb-2">{t('readyToPack')}</h3>
+      <p className="text-cream/50 max-w-md mb-6">
+        {t('dragAndDropHint')}
+      </p>
+      <div className="flex gap-3 text-sm">
+        <div className="flex items-center gap-2 text-cream/60">
+          <div className="w-2 h-2 rounded-full bg-primary" />
+          Smart file organization
+        </div>
+        <div className="flex items-center gap-2 text-cream/60">
+          <div className="w-2 h-2 rounded-full bg-success" />
+          UE naming support
+        </div>
+        <div className="flex items-center gap-2 text-cream/60">
+          <div className="w-2 h-2 rounded-full bg-secondary" />
+          Multi-format export
         </div>
       </div>
     </div>
+  )
+}
+          </div >
+        </div >
+      </div >
+    </div >
   );
 }
 
