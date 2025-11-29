@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-white antialiased;
+  }
+
+  * {
+    @apply transition-colors;
+    transition-duration: 150ms;
+  }
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .w-\[420px\] {
+    width: 340px;
+  }
+}
+
+@media (max-width: 768px) {
+  .flex.h-screen {
+    flex-direction: column;
+  }
+
+  .w-\[420px\],
+  .w-\[340px\] {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    max-height: 50vh;
+  }
+}
+
+/* Enhanced button transitions */
+button {
+  @apply transition-all duration-150;
+}
+
+button:active:not(:disabled) {
+  @apply scale-95;
+}
+
+/* Smooth animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Retro brown gradient backgrounds */
+.gradient-bg {
+  background: linear-gradient(135deg, #0a0806 0%, #1a1210 100%);
+}
+
+.gradient-surface {
+  background: linear-gradient(135deg, #1a1512 0%, #2a2118 100%);
+}
+
+/* Vintage glow effects */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(212, 165, 116, 0.3);
+}
+
+.glow-sepia {
+  box-shadow: 0 0 20px rgba(184, 153, 104, 0.3);
+}
+
+.glow-vintage {
+  box-shadow: 0 0 20px rgba(139, 115, 85, 0.3);
+}
+
+/* Paper texture overlay */
+.paper-texture {
+  background-image:
+    repeating-linear-gradient(0deg,
+      rgba(232, 220, 196, 0.03),
+      rgba(232, 220, 196, 0.03) 1px,
+      transparent 1px,
+      transparent 2px);
+}
+
+/* Vintage scanline effect */
+.scanlines {
+  background-image:
+    repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px);
+  pointer-events: none;
+}
