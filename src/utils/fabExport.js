@@ -105,7 +105,8 @@ async function analyzeNormalMaps(textureFiles) {
  * @returns {Promise<void>}
  */
 export async function exportFABMode(files, customName, onProgress) {
-    const textureFiles = findTexturesFolder(files);
+    // Find all texture files (images), regardless of whether they are in a "Textures" folder
+    const textureFiles = files.filter(file => isImageFile(file.name));
     const modelGroups = groupModelsByExtension(files);
 
     if (Object.keys(modelGroups).length === 0) {
@@ -143,9 +144,8 @@ export async function exportFABMode(files, customName, onProgress) {
             const texturesFolder = zip.folder(`${folderName}/Textures`);
 
             for (const texFile of textureFiles) {
-                const fileName = texFile.name.split('/').pop(); // Get filename without path
-
-                if (!isImageFile(fileName)) continue;
+                const fileName = texFile.name; // Use original name
+                const filePath = texFile.path || fileName;
 
                 // Check if this file should be excluded or converted
                 const normalInstruction = normalAnalysis.conversionMap[fileName];
@@ -165,8 +165,22 @@ export async function exportFABMode(files, customName, onProgress) {
                     normalType = normalInstruction.type;
                 }
 
-                const newName = convertToUENaming(fileName, customName, normalType);
-                texturesFolder.file(newName, fileData);
+                // Calculate relative path inside Textures folder
+                // 1. If file is in a "Textures" folder, preserve structure relative to it
+                // 2. If not, place in root of Textures folder
+                const pathParts = filePath.split('/');
+                const textureIndex = pathParts.findIndex(p => /^textures?$/i.test(p));
+
+                let relativePath = '';
+                if (textureIndex !== -1 && textureIndex < pathParts.length - 1) {
+                    // Has subfolders/files after Textures
+                    relativePath = pathParts.slice(textureIndex + 1, pathParts.length - 1).join('/');
+                }
+
+                const baseName = convertToUENaming(fileName, customName, normalType);
+                const finalPath = relativePath ? `${relativePath}/${baseName}` : baseName;
+
+                texturesFolder.file(finalPath, fileData);
             }
         }
 
