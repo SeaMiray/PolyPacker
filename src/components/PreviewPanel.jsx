@@ -182,9 +182,12 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
             // Group models by extension
             const modelGroups = {};
             const textureFiles = [];
+            const unityFiles = [];
+            const ueFiles = [];
 
             files.forEach(file => {
                 const ext = getFileExtension(file.name).substring(1).toUpperCase();
+                const extLower = getFileExtension(file.name).toLowerCase();
                 const isModel = ['FBX', 'OBJ', 'GLB', 'GLTF'].includes(ext);
                 const isImage = /\.(png|jpg|jpeg|tga|exr|psd|bmp|tif|tiff|dds)$/i.test(file.name);
 
@@ -193,6 +196,10 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
                     modelGroups[ext].push(file);
                 } else if (isImage) {
                     textureFiles.push(file);
+                } else if (extLower === '.unitypackage') {
+                    unityFiles.push(file);
+                } else if (['.uasset', '.uproject', '.umap'].includes(extLower)) {
+                    ueFiles.push(file);
                 }
             });
 
@@ -204,25 +211,39 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
                 packages: Object.entries(modelGroups).map(([ext, models]) => ({
                     name: `${customName}_${ext}`,
                     models,
-                    textures: textureStructure
+                    textures: textureStructure,
+                    unity: unityFiles,
+                    ue: ueFiles
                 }))
             };
         } else if (selectedPreset === 'Booth') {
             const categorized = {
-                Mesh: [],
+                FBX: [],
+                OBJ: [],
+                GLB: [],
+                GLTF: [],
                 Textures: [],
                 Unity: [],
+                UE: [],
                 Source: []
             };
 
             files.forEach(file => {
                 const ext = getFileExtension(file.name);
-                if (['.fbx', '.obj', '.glb', '.gltf'].includes(ext)) {
-                    categorized.Mesh.push(file);
-                } else if (['.png', '.jpg', '.jpeg', '.tga', '.exr', '.psd'].includes(ext)) {
+                if (ext === '.fbx') {
+                    categorized.FBX.push(file);
+                } else if (ext === '.obj') {
+                    categorized.OBJ.push(file);
+                } else if (ext === '.glb') {
+                    categorized.GLB.push(file);
+                } else if (ext === '.gltf') {
+                    categorized.GLTF.push(file);
+                } else if (['.png', '.jpg', '.jpeg', '.tga', '.exr', '.psd', '.bmp', '.tif', '.tiff', '.dds'].includes(ext)) {
                     categorized.Textures.push(file);
                 } else if (ext === '.unitypackage') {
                     categorized.Unity.push(file);
+                } else if (['.uasset', '.uproject', '.umap'].includes(ext)) {
+                    categorized.UE.push(file);
                 } else if (['.blend', '.max', '.ma', '.mb'].includes(ext)) {
                     categorized.Source.push(file);
                 }
@@ -266,6 +287,16 @@ export default function PreviewPanel({ selectedPreset, files, customName }) {
                             {/* Textures Folder (Nested) */}
                             {pkg.textures && (pkg.textures.__root_files__.length > 0 || Object.keys(pkg.textures).length > 1) && (
                                 <PreviewNode name="Textures" files={pkg.textures} />
+                            )}
+
+                            {/* Unity Folder */}
+                            {pkg.unity && pkg.unity.length > 0 && (
+                                <PreviewNode name="Unity" files={pkg.unity} />
+                            )}
+
+                            {/* UE Folder */}
+                            {pkg.ue && pkg.ue.length > 0 && (
+                                <PreviewNode name="UE" files={pkg.ue} />
                             )}
                         </div>
                     </div>

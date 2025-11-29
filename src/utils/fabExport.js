@@ -39,6 +39,33 @@ function groupModelsByExtension(files) {
 }
 
 /**
+ * Categorizes non-model files for FAB mode
+ * @param {Array} files - All files
+ * @returns {Object} - Categorized files
+ */
+function categorizeNonModelFiles(files) {
+    const categories = {
+        textures: [],
+        unity: [],
+        ue: []
+    };
+
+    files.forEach(file => {
+        const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+        if (isImageFile(file.name)) {
+            categories.textures.push(file);
+        } else if (ext === '.unitypackage') {
+            categories.unity.push(file);
+        } else if (['.uasset', '.uproject', '.umap'].includes(ext)) {
+            categories.ue.push(file);
+        }
+    });
+
+    return categories;
+}
+
+/**
  * Analyzes normal maps and determines conversion strategy
  * @param {Array} textureFiles - Texture files to analyze
  * @returns {Promise<Object>} - Analysis result with conversion instructions
@@ -105,8 +132,11 @@ async function analyzeNormalMaps(textureFiles) {
  * @returns {Promise<void>}
  */
 export async function exportFABMode(files, customName, onProgress) {
-    // Find all texture files (images), regardless of whether they are in a "Textures" folder
-    const textureFiles = files.filter(file => isImageFile(file.name));
+    // Categorize files
+    const nonModelFiles = categorizeNonModelFiles(files);
+    const textureFiles = nonModelFiles.textures;
+    const unityFiles = nonModelFiles.unity;
+    const ueFiles = nonModelFiles.ue;
     const modelGroups = groupModelsByExtension(files);
 
     if (Object.keys(modelGroups).length === 0) {
@@ -144,7 +174,7 @@ export async function exportFABMode(files, customName, onProgress) {
             const texturesFolder = zip.folder(`${folderName}/Textures`);
 
             for (const texFile of textureFiles) {
-                const fileName = texFile.name; // Use original name
+                const fileName = texFile.name;
                 const filePath = texFile.path || fileName;
 
                 // Check if this file should be excluded or converted
@@ -166,14 +196,11 @@ export async function exportFABMode(files, customName, onProgress) {
                 }
 
                 // Calculate relative path inside Textures folder
-                // 1. If file is in a "Textures" folder, preserve structure relative to it
-                // 2. If not, place in root of Textures folder
                 const pathParts = filePath.split('/');
                 const textureIndex = pathParts.findIndex(p => /^textures?$/i.test(p));
 
                 let relativePath = '';
                 if (textureIndex !== -1 && textureIndex < pathParts.length - 1) {
-                    // Has subfolders/files after Textures
                     relativePath = pathParts.slice(textureIndex + 1, pathParts.length - 1).join('/');
                 }
 
@@ -182,6 +209,24 @@ export async function exportFABMode(files, customName, onProgress) {
 
                 texturesFolder.file(finalPath, fileData);
             }
+        }
+
+        // Add Unity folder if Unity files exist
+        if (unityFiles.length > 0) {
+            const unityFolder = zip.folder(`${folderName}/Unity`);
+            unityFiles.forEach(file => {
+                const fileName = file.name.split('/').pop();
+                unityFolder.file(fileName, file.file || file);
+            });
+        }
+
+        // Add UE folder if UE files exist
+        if (ueFiles.length > 0) {
+            const ueFolder = zip.folder(`${folderName}/UE`);
+            ueFiles.forEach(file => {
+                const fileName = file.name.split('/').pop();
+                ueFolder.file(fileName, file.file || file);
+            });
         }
 
         // Generate and download ZIP

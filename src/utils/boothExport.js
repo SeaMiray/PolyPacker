@@ -1,15 +1,19 @@
 import JSZip from 'jszip';
 
 /**
- * Categorizes files for Booth mode
+ * Categorizes files for Booth mode with separate folders per format
  * @param {Array} files - All files
  * @returns {Object} - Categorized files
  */
 function categorizeBoothFiles(files) {
     const categories = {
-        Mesh: [],
+        FBX: [],
+        OBJ: [],
+        GLB: [],
+        GLTF: [],
         Textures: [],
         Unity: [],
+        UE: [],
         Source: []
     };
 
@@ -17,25 +21,31 @@ function categorizeBoothFiles(files) {
         const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
         const fileName = file.name.split('/').pop(); // Remove path if exists
 
-        // 3D Models (excluding source formats)
-        if (['.fbx', '.obj', '.glb', '.gltf'].includes(ext)) {
-            categories.Mesh.push({ ...file, fileName });
+        // 3D Models - separate by format
+        if (ext === '.fbx') {
+            categories.FBX.push({ ...file, fileName });
+        } else if (ext === '.obj') {
+            categories.OBJ.push({ ...file, fileName });
+        } else if (ext === '.glb') {
+            categories.GLB.push({ ...file, fileName });
+        } else if (ext === '.gltf') {
+            categories.GLTF.push({ ...file, fileName });
         }
         // Textures
-        else if (['.png', '.jpg', '.jpeg', '.tga', '.exr', '.psd', '.bmp'].includes(ext)) {
+        else if (['.png', '.jpg', '.jpeg', '.tga', '.exr', '.psd', '.bmp', '.tif', '.tiff', '.dds'].includes(ext)) {
             categories.Textures.push({ ...file, fileName });
         }
         // Unity packages
         else if (ext === '.unitypackage') {
             categories.Unity.push({ ...file, fileName });
         }
+        // UE files
+        else if (['.uasset', '.uproject', '.umap'].includes(ext)) {
+            categories.UE.push({ ...file, fileName });
+        }
         // Source files
         else if (['.blend', '.max', '.ma', '.mb', '.c4d', '.ztl'].includes(ext)) {
             categories.Source.push({ ...file, fileName });
-        }
-        // Default: put in root or Textures if image-like
-        else if (['.tif', '.tiff', '.dds'].includes(ext)) {
-            categories.Textures.push({ ...file, fileName });
         }
     });
 
@@ -57,7 +67,7 @@ export async function exportBoothMode(files, customName) {
     const zip = new JSZip();
     const rootFolder = `${customName}Assets`;
 
-    // Add files to categorized folders
+    // Add files to categorized folders (only create folders with content)
     Object.entries(categorized).forEach(([category, categoryFiles]) => {
         if (categoryFiles.length > 0) {
             const folder = zip.folder(`${rootFolder}/${category}`);
