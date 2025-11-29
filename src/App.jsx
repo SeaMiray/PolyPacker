@@ -248,7 +248,7 @@ function App() {
   }, [files]);
 
   return (
-    <div {...getRootProps()} className="flex h-screen w-screen bg-[#09090b] text-white overflow-hidden font-sans selection:bg-primary/30">
+    <div {...getRootProps()} className="flex h-screen w-screen bg-background text-cream overflow-hidden font-sans selection:bg-primary/30 paper-texture">
       <input {...getInputProps()} />
 
       {/* Toast Notifications */}
@@ -316,10 +316,10 @@ function App() {
       )}
 
       {/* Left Pane: Input */}
-      <div className="w-[420px] border-r border-white/5 flex flex-col bg-[#0c0c0e]">
-        <div className="h-16 px-6 border-b border-white/5 flex items-center justify-between bg-[#0c0c0e]/50 backdrop-blur-sm sticky top-0 z-10">
-          <h2 className="font-semibold flex items-center gap-3 text-sm tracking-wide text-gray-200">
-            <div className="p-1.5 bg-blue-500/10 rounded-md text-blue-400">
+      <div className="w-[420px] border-r border-primary/10 flex flex-col bg-surface">
+        <div className="h-16 px-6 border-b border-primary/10 flex items-center justify-between bg-surface/50 backdrop-blur-sm sticky top-0 z-10">
+          <h2 className="font-semibold flex items-center gap-3 text-sm tracking-wide text-primary">
+            <div className="p-1.5 bg-primary/20 rounded-md text-primary border border-primary/30">
               <FolderOpen size={16} />
             </div>
             Input Sources
