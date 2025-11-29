@@ -325,11 +325,11 @@ function App() {
             Input Sources
           </h2>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-gray-500 bg-white/5 px-2 py-1 rounded-full">{files.length}</span>
+            <span className="text-xs font-medium text-cream/60 bg-primary/10 px-2 py-1 rounded-full retro-inset">{files.length}</span>
             {files.length > 0 && (
               <button
                 onClick={(e) => { e.stopPropagation(); clearAllFiles(); }}
-                className="p-1.5 rounded-md hover:bg-red-500/10 hover:text-red-400 text-gray-500 transition-all"
+                className="p-1.5 rounded-md hover:bg-danger/20 hover:text-danger text-cream/50 transition-all"
                 title="Clear all files"
               >
                 <Trash2 size={14} />
@@ -342,13 +342,13 @@ function App() {
           {/* Search & Filter */}
           <div className="space-y-2">
             <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/50" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search files..."
-                className="w-full bg-[#18181b] border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all"
+                placeholder={t('searchFiles')}
+                className="w-full bg-surface-light border border-primary/20 rounded-lg pl-9 pr-3 py-2 text-sm text-cream placeholder-cream/30 focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/40 transition-all retro-inset"
               />
             </div>
 
@@ -358,10 +358,10 @@ function App() {
                   key={type}
                   onClick={() => setFilterType(type)}
                   className={cn(
-                    "px-2 py-1 rounded transition-all",
+                    "px-2 py-1 rounded transition-all retro-button",
                     filterType === type
-                      ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                      : "bg-white/[0.02] text-gray-500 border border-white/5 hover:border-white/10"
+                      ? "bg-primary/30 text-cream border border-primary/50 shadow-inner"
+                      : "bg-surface-light/50 text-cream/60 border border-primary/10 hover:border-primary/30"
                   )}
                 >
                   {type} ({fileCounts[type]})
@@ -372,7 +372,7 @@ function App() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full bg-[#18181b] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-blue-500/50 transition-all"
+              className="w-full bg-surface-light border border-primary/20 rounded-lg px-3 py-1.5 text-xs text-cream focus:outline-none focus:border-primary/60 transition-all retro-inset"
             >
               <option value="name-asc">Name (A-Z)</option>
               <option value="name-desc">Name (Z-A)</option>
@@ -385,10 +385,10 @@ function App() {
           <div
             onClick={(e) => { e.stopPropagation(); document.getElementById('file-input').click(); }}
             className={cn(
-              "border-2 border-dashed rounded-xl p-6 transition-all duration-300 ease-out cursor-pointer group relative overflow-hidden",
+              "border-2 border-dashed rounded-xl p-6 transition-all duration-300 ease-out cursor-pointer group relative overflow-hidden vintage-border",
               isDragActive
-                ? "border-blue-500 bg-blue-500/10 scale-[0.99] glow-blue"
-                : "border-white/10 hover:border-blue-500/30 hover:bg-white/[0.02]"
+                ? "border-primary bg-primary/15 scale-[0.99] glow-vintage"
+                : "border-primary/20 hover:border-primary/40 hover:bg-surface-light/50"
             )}
           >
             <input
@@ -401,26 +401,26 @@ function App() {
             <div className="flex flex-col items-center justify-center text-center gap-2 relative z-10">
               <div className={cn(
                 "p-2 rounded-full transition-colors duration-300",
-                isDragActive ? "bg-blue-500/20 text-blue-400" : "bg-white/5 text-gray-400 group-hover:text-gray-300"
+                isDragActive ? "bg-primary/30 text-primary" : "bg-surface-light text-primary/60 group-hover:text-primary"
               )}>
                 <UploadCloud size={20} className={isDragActive ? "text-blue-400" : ""} />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
-                  {isDragActive ? "Drop now" : "Click or drag"}
+                <p className="text-sm font-medium text-cream group-hover:text-cream/90 transition-colors">
+                  {isDragActive ? t('dropNow') : t('clickOrDrag')}
                 </p>
-                <p className="text-[10px] text-gray-500 mt-0.5">
+                <p className="text-[10px] text-cream/40 mt-0.5">
                   FBX, OBJ, PNG, JPG, etc.
                 </p>
               </div>
             </div>
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/0 via-blue-500/0 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/0 via-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </div>
 
           {/* Folder Upload Button */}
           <button
             onClick={(e) => { e.stopPropagation(); folderInputRef.current?.click(); }}
-            className="flex items-center justify-center gap-2 px-3 py-2 border border-white/10 rounded-lg hover:bg-blue-500/10 hover:border-blue-500/50 text-gray-300 hover:text-blue-400 transition-all text-xs font-medium"
+            className="flex items-center justify-center gap-2 px-3 py-2 border border-primary/20 rounded-lg hover:bg-primary/10 hover:border-primary/50 text-cream/70 hover:text-primary transition-all text-xs font-medium retro-button"
           >
             <FolderUp size={14} />
             Upload Folder
@@ -480,30 +480,30 @@ function App() {
                   layout
                   transition={{ duration: 0.15 }}
                   className={cn(
-                    "group flex items-center gap-2 p-2 rounded-lg border transition-all",
+                    "group flex items-center gap-2 p-2 rounded-lg border transition-all vintage-border",
                     selectedFiles.has(file.name)
-                      ? "bg-blue-500/10 border-blue-500/30"
-                      : "bg-white/[0.02] hover:bg-white/[0.04] border-white/5 hover:border-white/10"
+                      ? "bg-primary/15 border-primary/40 shadow-inner"
+                      : "bg-surface-light/30 hover:bg-surface-light/60 border-primary/10 hover:border-primary/25"
                   )}
                 >
                   <input
                     type="checkbox"
                     checked={selectedFiles.has(file.name)}
                     onChange={(e) => { e.stopPropagation(); toggleFileSelection(file.name); }}
-                    className="flex-shrink-0 w-3 h-3 rounded border border-white/20 bg-transparent checked:bg-blue-500 checked:border-blue-500 cursor-pointer"
+                    className="flex-shrink-0 w-3 h-3 rounded border border-primary/30 bg-transparent checked:bg-primary checked:border-primary cursor-pointer"
                   />
                   <FileThumbnail file={file} size={36} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-300 truncate group-hover:text-white transition-colors">
+                    <p className="text-xs font-medium text-cream/80 truncate group-hover:text-cream transition-colors">
                       {file.name}
                     </p>
-                    <p className="text-[9px] text-gray-600 font-mono">
+                    <p className="text-[9px] text-cream/40 font-mono">
                       {formatFileSize(file.size)}
                     </p>
                   </div>
                   <button
                     onClick={(e) => { e.stopPropagation(); removeFile(file.name); }}
-                    className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-red-500/10 hover:text-red-400 text-gray-500 transition-all"
+                    className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-danger/20 hover:text-danger text-cream/50 transition-all"
                   >
                     <X size={12} />
                   </button>
@@ -512,14 +512,14 @@ function App() {
             </AnimatePresence>
 
             {filteredFiles.length === 0 && files.length > 0 && (
-              <div className="h-32 flex items-center justify-center text-gray-600 text-sm italic">
-                No files match your filters
+              <div className="h-32 flex items-center justify-center text-cream/30 text-sm italic">
+                {t('noMatchingFiles')}
               </div>
             )}
 
             {files.length === 0 && (
-              <div className="h-32 flex items-center justify-center text-gray-600 text-sm italic">
-                No files added yet
+              <div className="h-32 flex items-center justify-center text-cream/30 text-sm italic">
+                {t('noFilesYet')}
               </div>
             )}
           </div>
@@ -527,27 +527,27 @@ function App() {
       </div>
 
       {/* Right Pane: Settings & Preview */}
-      <div className="flex-1 flex flex-col bg-[#09090b] relative">
+      <div className="flex-1 flex flex-col bg-background relative">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] pointer-events-none" />
 
         {/* Header */}
-        <div className="h-20 border-b border-white/5 flex items-center justify-between px-8 bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="h-20 border-b border-primary/10 flex items-center justify-between px-8 bg-surface/80 backdrop-blur-md sticky top-0 z-10 vintage-border">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <div className={cn(
-                "p-1.5 rounded-md",
-                selectedPreset === 'FAB' ? "bg-blue-500/10 text-blue-400" : "bg-teal/10 text-teal"
+                "p-1.5 rounded-md border",
+                selectedPreset === 'FAB' ? "bg-primary/20 text-primary border-primary/40" : "bg-success/20 text-success border-success/40"
               )}>
                 <Package size={16} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] text-gray-500 uppercase tracking-wider">Preset</span>
+                <span className="text-[10px] text-cream/50 uppercase tracking-wider">Preset</span>
                 <select
                   value={selectedPreset}
                   onChange={(e) => setSelectedPreset(e.target.value)}
                   className={cn(
                     "bg-transparent border-0 text-sm font-semibold cursor-pointer focus:outline-none",
-                    selectedPreset === 'FAB' ? "text-blue-400" : "text-teal"
+                    selectedPreset === 'FAB' ? "text-primary" : "text-success"
                   )}
                 >
                   <option value="FAB">FAB (Unreal)</option>
@@ -559,13 +559,13 @@ function App() {
             <div className="h-10 w-px bg-white/10" />
 
             <div className="flex flex-col">
-              <span className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Package Name</span>
+              <span className="text-[10px] text-cream/50 uppercase tracking-wider mb-1">Package Name</span>
               <input
                 type="text"
                 value={customName}
                 onChange={(e) => setCustomName(sanitizeCustomName(e.target.value))}
                 placeholder="Package Name"
-                className="bg-[#18181b] border border-white/10 rounded-lg px-3 py-1.5 text-sm font-medium text-white focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all w-56"
+                className="bg-surface-light border border-primary/20 rounded-lg px-3 py-1.5 text-sm font-medium text-cream focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/40 transition-all w-56 retro-inset"
               />
             </div>
           </div>
@@ -574,10 +574,10 @@ function App() {
             onClick={(e) => { e.stopPropagation(); handleExport(); }}
             disabled={files.length === 0 || exportProgress.isExporting}
             className={cn(
-              "px-6 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition-all",
+              "px-6 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition-all retro-button",
               files.length === 0 || exportProgress.isExporting
-                ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-400 hover:to-blue-500 hover:scale-105 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.6)] active:scale-95"
+                ? "bg-surface-light text-cream/30 cursor-not-allowed border border-primary/10"
+                : "bg-gradient-to-r from-primary to-accent text-background hover:from-primary/90 hover:to-accent/90 hover:scale-105 shadow-lg hover:shadow-primary/30 active:scale-95 border border-primary/50"
             )}
           >
             <Download size={16} />

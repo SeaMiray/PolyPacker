@@ -7,18 +7,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#0a0806',      // Very dark brown-black
-        surface: '#1a1512',          // Dark brown
-        'surface-light': '#2a2118',  // Lighter brown
-        primary: '#d4a574',          // Warm gold/tan
-        secondary: '#b8956a',        // Muted gold
-        accent: '#e8b887',           // Light tan
-        success: '#8b9c6f',          // Olive green
-        warning: '#d4a047',          // Amber/mustard
-        danger: '#c97c5d',           // Terracotta
-        'sepia': '#b89968',          // Sepia tone
-        'vintage-brown': '#8b7355',  // Vintage brown
-        'cream': '#e8dcc4',          // Cream/beige
+        background: '#050403',      // Almost black brown
+        surface: '#0d0b09',          // Very dark brown
+        'surface-light': '#1a1512',  // Dark brown
+        primary: '#b8956a',          // Muted gold/tan
+        secondary: '#8b7355',        // Darker muted gold
+        accent: '#d4a574',           // Light tan (for highlights)
+        success: '#6b7c52',          // Dark olive green
+        warning: '#b8904f',          // Dark amber
+        danger: '#a8634a',           // Dark terracotta
+        'sepia': '#9a7d56',          // Dark sepia
+        'vintage-brown': '#6b5d4f',  // Very vintage brown
+        'cream': '#c9b896',          // Muted cream/beige
       }
     },
   },
